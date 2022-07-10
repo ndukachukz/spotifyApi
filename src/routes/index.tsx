@@ -16,7 +16,6 @@ const routes: AppRouterRoutes = [
   {
     path: "/auth",
     Element: () => <Auth />,
-    hasParams: "/auth/:code",
   },
   {
     path: "*",

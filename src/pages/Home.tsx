@@ -1,5 +1,5 @@
 import { FC, ReactElement } from "react";
-import { Layout, Navbar } from "../components";
+import { Layout } from "../components";
 
 const Home: FC = (): ReactElement => {
   return <Layout></Layout>;

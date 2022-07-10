@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { FC, ReactElement, useEffect } from "react";
+import { FC, ReactElement, useEffect, useState } from "react";
 import "./styles/AuthScreen.css";
 import {
   Button,
@@ -12,27 +12,20 @@ import {
   Center,
 } from "@chakra-ui/react";
 import { FaSpotify } from "react-icons/fa";
+import { getReturnedParams } from "../utils";
+import { useLocation } from "react-router-dom";
+import { handleLogin } from "../services";
 
 const Auth: FC = (): ReactElement => {
-  const response_type = "code",
-    redirect_uri = "http://localhost:3000/auth/",
-    client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID,
-    scope = "user-read-private user-read-email",
-    authUri =
-      "client_id=" +
-      client_id +
-      "&response_type=" +
-      response_type +
-      "&redirect_uri=" +
-      redirect_uri +
-      "&scope=" +
-      scope;
+  const { hash } = useLocation();
+  const [accessToken, setAccessToken] = useState<string>();
 
-  const spotifyLogin = encodeURI(
-    `https://accounts.spotify.com/authorize?${authUri}`
-  );
-  const handleLogin = () => window.location.replace(spotifyLogin);
-
+  useEffect(() => {
+    if (hash) {
+      const { accessToken } = getReturnedParams(hash);
+      setAccessToken(accessToken);
+    }
+  }, [hash]);
   return (
     <Stack minH={"100vh"} direction={{ base: "column", md: "row", lg: "row" }}>
       <Flex as={Hide} flex={[2, 1, 2]} below={"sm"}>

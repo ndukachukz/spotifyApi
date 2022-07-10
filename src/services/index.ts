@@ -1,6 +1,6 @@
 import registerService from "./register";
-import loginService from "./login";
+import handleLogin from "./login";
 
 import { spotifyApi } from "./spotifyApi";
 
-export { registerService, loginService, spotifyApi };
+export { registerService, handleLogin, spotifyApi };
