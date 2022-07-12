@@ -31,8 +31,6 @@ export default function withAction() {
 
   const debouncedSearch = useRef(
     debounce(async (term) => {
-      setSearch(term);
-      // if(search> 0)
       await spotifyApi
         .search(term, ["album", "playlist"], {
           limit: 5,
@@ -50,6 +48,7 @@ export default function withAction() {
   ).current;
 
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearch(e.target.value);
     debouncedSearch(e.target.value);
   }
   useEffect(() => {

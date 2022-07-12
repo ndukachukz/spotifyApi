@@ -27,34 +27,6 @@ const NewReleases = ({ limit }: Props) => {
           function (userLibData) {
             // Output items
             dispatch(setUserLibrary([...userLibData.body.items]));
-            let i: number = 0;
-            const ids = newReleases?.map((obj: any, j: number) => {
-              i++;
-              return obj.id;
-            });
-
-            spotifyApi
-              .containsMySavedAlbums(ids)
-              .then((boolRes) => {
-                const bool = boolRes.body[i];
-
-                // run thru newReleases
-                for (let index = 0; index < newReleases.length; index++) {
-                  const release = newReleases[index];
-
-                  // run thru arrays of booleans
-                  for (let j = 0; j < boolRes.body.length; j++) {
-                    const obj = {
-                      ...release,
-                      isInLib: boolRes.body[j],
-                    };
-                    console.log(obj);
-                  }
-                }
-              })
-              .catch((e) => {
-                console.log(e);
-              });
           },
           function (err) {
             console.log("Something went wrong!", err);
