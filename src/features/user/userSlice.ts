@@ -1,15 +1,31 @@
+import { StatHelpText } from "@chakra-ui/react";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import User from "../../types/user";
+import User from "../../types/User";
 
-type UserState = User | null;
-
-const initialState: UserState = null;
+const initialState: User = {
+  country: "",
+  display_name: undefined,
+  email: "",
+  external_urls: {
+    spotify: "",
+  },
+  followers: undefined,
+  href: null,
+  id: null,
+  images: undefined, //WILL UPDATE WHEN FIND TYPE
+  product: null,
+  type: "user",
+  uri: "",
+};
 
 const userSlice = createSlice({
   name: "userSlice",
   initialState,
   reducers: {
-    setUser(state, action) {},
+    setUser(state, action: PayloadAction<User>) {
+      
+      return {...state,...action.payload}
+    },
   },
 });
 

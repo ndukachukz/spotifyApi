@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { FC, ReactElement, useEffect, useState } from "react";
+import { FC, ReactElement, useEffect } from "react";
 import "./styles/AuthScreen.css";
 import {
   Button,
@@ -9,23 +9,62 @@ import {
   Image,
   Text,
   Hide,
-  Center,
 } from "@chakra-ui/react";
 import { FaSpotify } from "react-icons/fa";
-import { getReturnedParams } from "../utils";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { handleLogin } from "../services";
+import { useAuthFetch } from "../Hooks";
+import { useAppDispatch, useAppSelector } from "../App/hooks";
+import { setToken } from "../features/authToken/authTokenSlice";
 
 const Auth: FC = (): ReactElement => {
-  const { hash } = useLocation();
-  const [accessToken, setAccessToken] = useState<string>();
+  const [searchParams] = useSearchParams();
+  const {
+    data,
+    error,
+    getAccessToken,
+    getRefreshToken,
+    isError,
+    isLoading,
+    isSuccess,
+  } = useAuthFetch();
+  const code = searchParams.get("code");
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const localTokens: any = localStorage.getItem("tokens");
+  const { access_token, refresh_token } = useAppSelector(
+    (state) => state.authToken
+  );
 
   useEffect(() => {
-    if (hash) {
-      const { accessToken } = getReturnedParams(hash);
-      setAccessToken(accessToken);
+    if (code) {
+      getAccessToken(code);
     }
-  }, [hash]);
+  }, [code]);
+
+  useEffect(() => {
+    if (!refresh_token || !data?.expires_in) return;
+    const interval = setInterval(() => {
+      getRefreshToken(refresh_token || JSON.parse(localTokens));
+    }, (data?.expires_in - 60) * 1000);
+    return clearInterval(interval);
+  }, [refresh_token, data?.expires_in]);
+
+  useEffect(() => {
+    if (!data?.refresh_token || !data?.access_token) return;
+    // SET DATA TO GLOBAL STORE
+    if (data && data?.access_token) {
+      dispatch(
+        setToken({
+          access_token: String(data?.access_token),
+          refresh_token: String(data?.refresh_token),
+        })
+      );
+      navigate("/");
+    }
+  }, [error, data]);
+
   return (
     <Stack minH={"100vh"} direction={{ base: "column", md: "row", lg: "row" }}>
       <Flex as={Hide} flex={[2, 1, 2]} below={"sm"}>
@@ -61,9 +100,6 @@ const Auth: FC = (): ReactElement => {
               Sign in with Spotify
             </Button>
           </Stack>
-          <Center>
-            <Text></Text>
-          </Center>
         </Stack>
       </Flex>
     </Stack>

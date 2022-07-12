@@ -10,13 +10,60 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  useDisclosure,
   useColorModeValue,
   Input,
 } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
+import { useEffect, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../App/hooks";
+import useSpotifyWebApi from "../../Hooks/useSpotifyWebApi";
+import { useDebounce } from "../../Hooks";
+import { setSearchResults } from "../../features/seachResults/searchResultsSlice";
+import debounce from "lodash.debounce";
 
 export default function withAction() {
+  const spotifyApi = useSpotifyWebApi();
+  const [search, setSearch] = useState<string>("");
+
+  const { display_name, images } = useAppSelector((state) => state.user);
+  const searchResults = useAppSelector((state) => state.searchResults);
+  const dispatch = useAppDispatch();
+
+  const debouncedSearch = useRef(
+    debounce(async (term) => {
+      setSearch(term);
+      // if(search> 0)
+      await spotifyApi
+        .search(term, ["album", "playlist"], {
+          limit: 5,
+          offset: 1,
+        })
+        .then((searchData: any) => {
+          const newData = [
+            ...searchData.body.albums?.items,
+            ...searchData.body.playlists?.items,
+          ];
+          dispatch(setSearchResults(newData));
+        })
+        .catch((err) => console.log(err));
+    }, 300)
+  ).current;
+
+  async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    debouncedSearch(e.target.value);
+  }
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    if (search?.length <= 0) {
+      dispatch(setSearchResults([]));
+    }
+  }, [search]);
+
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
@@ -29,22 +76,22 @@ export default function withAction() {
               cursor={"pointer"}
               minW={0}
             >
-              <Avatar
-                size={"sm"}
-                src={
-                  "https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                }
-              />
+              <Avatar size={"sm"} src={images && images[1]?.url} />
             </MenuButton>
             <MenuList>
               <MenuItem>Log Out</MenuItem>
             </MenuList>
           </Menu>
-          <Box ml={"4"}>username</Box>
+          <Box ml={"4"}>{display_name}</Box>
         </Flex>
 
         <Flex alignItems={"center"}>
-          <Input placeholder="Search" size="sm" />
+          <Input
+            placeholder="Search"
+            size="sm"
+            value={search}
+            onChange={handleChange}
+          />
 
           <IconButton
             icon={<Search2Icon />}
@@ -53,7 +100,7 @@ export default function withAction() {
           />
         </Flex>
         <Flex alignItems={"center"}>
-          <Link>My Library</Link>
+          <Link href={"mylibrary"}>My Library</Link>
           <Link ml={3}>Log Out</Link>
         </Flex>
       </Flex>

@@ -1,6 +1,4 @@
-import registerService from "./register";
 import handleLogin from "./login";
+import writeDbData from "./writeDbData";
 
-import { spotifyApi } from "./spotifyApi";
-
-export { registerService, handleLogin, spotifyApi };
+export { handleLogin, writeDbData };

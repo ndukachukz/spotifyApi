@@ -1,14 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
+import authTokenReducer from "../features/authToken/authTokenSlice";
+import newReleasesReducer from "../features/newReleases/newReleasesSlice";
+import searchResultsReducer from "../features/seachResults/searchResultsSlice";
 import userReducer from "../features/user/userSlice";
-import { spotifyApi } from "../services";
+import spotifyWebApiReducer from "../features/spotifyWebApi/spotifyWebApiSlice";
+import userLibraryReducer from "../features/userLibrary/userLibrarySlice";
 
 export const store = configureStore({
   reducer: {
+    authToken: authTokenReducer,
+    searchResults: searchResultsReducer,
+    newReleases: newReleasesReducer,
+    spotifyWebApi: spotifyWebApiReducer,
+    userLibrary: userLibraryReducer,
     user: userReducer,
-    [spotifyApi().reducerPath]: spotifyApi().reducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(spotifyApi().middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;
