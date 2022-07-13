@@ -8,7 +8,7 @@ import { setUserLibrary } from "../features/userLibrary/userLibrarySlice";
 import useSpotifyWebApi from "../Hooks/useSpotifyWebApi";
 
 const Home: FC = (): ReactElement => {
-  // const spotifyApi: SpotifyWebApi = useSpotifyWebApi();
+  const spotifyApi: SpotifyWebApi = useSpotifyWebApi();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -16,10 +16,13 @@ const Home: FC = (): ReactElement => {
   const {
     searchResults,
     newReleases,
-    spotifyWebApi: { setSpotifyWebApi: spotifyApi },
+    authToken, 
   } = useAppSelector((state) => state);
 
   useEffect(() => {
+    if(authToken.access_token.length < 10 || authToken.refresh_token.length < 10) navigate("/auth")
+
+
     spotifyApi.getMe().then(
       function (data) {
         dispatch(
@@ -38,6 +41,8 @@ const Home: FC = (): ReactElement => {
           })
         );
         console.log(data);
+        // Save user to DB
+
         spotifyApi.getMySavedAlbums().then(
           function (userLibData) {
             // Output items
@@ -45,11 +50,13 @@ const Home: FC = (): ReactElement => {
           },
           function (err) {
             console.log("Something went wrong!", err);
+           navigate("auth")
           }
         );
       },
       function (err) {
         console.log("Something went wrong!", err);
+       navigate("/auth")
       }
     );
 
@@ -60,7 +67,7 @@ const Home: FC = (): ReactElement => {
     <Layout>
       <NewReleases limit={5} />
 
-      {searchResults.length > 0 &&
+      {
         searchResults.map((item: any, i: number) => (
           <SearchResultItem key={i} {...item} />
         ))}

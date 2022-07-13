@@ -1,5 +1,5 @@
 import { firebaseApp } from "../config";
-import { ref, set } from "firebase/database";
+import { ref, set, query, } from "firebase/database";
 
 const writeDbData = (
   key: string,
@@ -8,7 +8,10 @@ const writeDbData = (
   onErrorCm: (params: any) => any
 ) => {
   const db = firebaseApp().database;
-  set(ref(db, key), value).then(onCompleteCb).catch(onErrorCm);
+
+  const _ref = ref(db, key);
+
+  set(_ref, value).then(onCompleteCb).catch(onErrorCm);
 };
 
 export default writeDbData;
