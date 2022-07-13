@@ -22,7 +22,6 @@ console.log(!!_localTokens)
   const localAccessToken = _localTokens?.access_token;
   const localRefreshToken = _localTokens?.refresh_token;
 
-  const isLocalTokensAvailable = !!localAccessToken || !!localRefreshToken;
 
 
   console.log("Local Storage =>", !!localAccessToken, !!localRefreshToken)
