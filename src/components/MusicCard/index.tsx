@@ -23,9 +23,9 @@ const MusicCard = ({ ...props }: any) => {
     spotifyApi
       .addToMySavedAlbums([props?.id])
       .then(function (data) {
-        console.log("Added album! =>", data);
+        // console.log("Added album! =>", data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>{ /* console.log(err) */});
 
   return (
     <Center py={12}>

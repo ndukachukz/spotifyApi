@@ -40,7 +40,6 @@ const Home: FC = (): ReactElement => {
             uri: data.body.uri,
           })
         );
-        console.log(data);
         // Save user to DB
 
         spotifyApi.getMySavedAlbums().then(
@@ -49,13 +48,11 @@ const Home: FC = (): ReactElement => {
             dispatch(setUserLibrary([...userLibData.body.items]));
           },
           function (err) {
-            console.log("Something went wrong!", err);
            navigate("auth")
           }
         );
       },
       function (err) {
-        console.log("Something went wrong!", err);
        navigate("/auth")
       }
     );

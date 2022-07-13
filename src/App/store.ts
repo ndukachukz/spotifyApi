@@ -15,6 +15,7 @@ export const store = configureStore({
     userLibrary: userLibraryReducer,
     user: userReducer,
   },
+  devTools: process.env.NODE_ENV !== 'production',
 });
 
 export type AppDispatch = typeof store.dispatch;

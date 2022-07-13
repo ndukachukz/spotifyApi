@@ -13,9 +13,6 @@ const useDebounce = (value: Value, delay: number): Value => {
     return clearTimeout(timeout);
   }, [value, delay]);
 
-  if (debounceValue) console.log("debounceValue =>", debounceValue);
-  console.log("value =>", value);
-
   return debounceValue;
 };
 

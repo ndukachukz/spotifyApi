@@ -20,10 +20,16 @@ import useSpotifyWebApi from "../../Hooks/useSpotifyWebApi";
 import { useDebounce } from "../../Hooks";
 import { setSearchResults } from "../../features/seachResults/searchResultsSlice";
 import debounce from "lodash.debounce";
+import { useNavigate } from "react-router-dom";
+import { setSpotifyWebApi } from "../../features/spotifyWebApi/spotifyWebApiSlice";
+import SpotifyWebApi from "spotify-web-api-node";
+import { setToken } from "../../features/authToken/authTokenSlice";
+import { setUser } from "../../features/user/userSlice";
 
 export default function withAction() {
   const spotifyApi = useSpotifyWebApi();
   const [search, setSearch] = useState<string>("");
+  const navigate = useNavigate()
 
   const { display_name, images } = useAppSelector((state) => state.user);
   const searchResults = useAppSelector((state) => state.searchResults);
@@ -43,7 +49,7 @@ export default function withAction() {
           ];
           dispatch(setSearchResults(newData));
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {/* console.log(err) */});
     }, 300)
   ).current;
 
@@ -62,6 +68,30 @@ export default function withAction() {
       dispatch(setSearchResults([]));
     }
   }, [search]);
+
+  const onLogout = () => {
+    dispatch(setSpotifyWebApi(new SpotifyWebApi()));
+    dispatch(setToken({access_token: "", refresh_token: ""}))
+    dispatch(setUser({
+      country: "",
+      display_name: undefined,
+      email: "",
+      external_urls: {
+        spotify: "",
+      },
+      followers: undefined,
+      href: null,
+      id: null,
+      images: undefined, //WILL UPDATE WHEN FIND TYPE
+      product: null,
+      type: "user",
+      uri: "",
+    
+    }))
+
+    localStorage.removeItem("tokens")
+    navigate("auth")
+  }
 
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
@@ -100,7 +130,7 @@ export default function withAction() {
         </Flex>
         <Flex alignItems={"center"}>
           <Link href={"mylibrary"}>My Library</Link>
-          <Link ml={3}>Log Out</Link>
+          <Link as={"button"} ml={3} onClick={onLogout} >Log Out</Link>
         </Flex>
       </Flex>
     </Box>

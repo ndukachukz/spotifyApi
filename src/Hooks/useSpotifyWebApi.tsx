@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SpotifyWebApi from "spotify-web-api-node";
-import { json } from "stream/consumers";
 import { useAppDispatch, useAppSelector } from "../App/hooks";
 import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from "../constants/envVars";
 import { setSpotifyWebApi } from "../features/spotifyWebApi/spotifyWebApiSlice";
@@ -15,16 +14,11 @@ const useSpotifyWebApi = ():SpotifyWebApi  => {
 
   const localTokens: any = localStorage.getItem("tokens");
   const _localTokens = JSON.parse(localTokens)
-console.log(!!_localTokens)
-
 
 
   const localAccessToken = _localTokens?.access_token;
   const localRefreshToken = _localTokens?.refresh_token;
 
-
-
-  console.log("Local Storage =>", !!localAccessToken, !!localRefreshToken)
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -32,15 +26,11 @@ console.log(!!_localTokens)
     if (
       !!_localTokens === false
     ){
-     navigate("/auth");}
-
-
+     navigate("/auth");
+    }
     spotifyApi.setAccessToken(localAccessToken);
-
     spotifyApi.setRefreshToken(localRefreshToken);
-
     dispatch(setSpotifyWebApi(spotifyApi));
-    
   }, []);
 
   return spotifyApi;

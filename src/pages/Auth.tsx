@@ -16,6 +16,7 @@ import { handleLogin } from "../services";
 import { useAuthFetch } from "../Hooks";
 import { useAppDispatch, useAppSelector } from "../App/hooks";
 import { setToken } from "../features/authToken/authTokenSlice";
+import { ScreenLoading } from "../components";
 
 const Auth: FC = (): ReactElement => {
   const [searchParams] = useSearchParams();
@@ -32,7 +33,10 @@ const Auth: FC = (): ReactElement => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const localTokens: any = localStorage.getItem("tokens");
+  const localTokens:any = localStorage.getItem("tokens")
+  const _localTokens = JSON.parse(localTokens);
+  const localAccessToken = _localTokens?.access_token
+  const localRefreshToken = _localTokens?.refresh_token
   const { access_token, refresh_token } = useAppSelector(
     (state) => state.authToken
   );
@@ -46,7 +50,7 @@ const Auth: FC = (): ReactElement => {
   useEffect(() => {
     if (!refresh_token || !data?.expires_in) return;
     const interval = setInterval(() => {
-      getRefreshToken(refresh_token || JSON.parse(localTokens));
+      getRefreshToken(refresh_token || localRefreshToken);
     }, (data?.expires_in - 60) * 1000);
     return clearInterval(interval);
   }, [refresh_token, data?.expires_in]);
@@ -66,7 +70,8 @@ const Auth: FC = (): ReactElement => {
   }, [error, data]);
 
   return (
-    <Stack minH={"100vh"} direction={{ base: "column", md: "row", lg: "row" }}>
+    <>{isLoading ? (<ScreenLoading />) : (
+       <Stack minH={"100vh"} direction={{ base: "column", md: "row", lg: "row" }}>
       <Flex as={Hide} flex={[2, 1, 2]} below={"sm"}>
         <Image
           alt={"Login Image"}
@@ -103,6 +108,10 @@ const Auth: FC = (): ReactElement => {
         </Stack>
       </Flex>
     </Stack>
+    )}
+    </>
+    
+   
   );
 };
 

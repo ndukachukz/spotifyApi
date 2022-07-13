@@ -21,19 +21,19 @@ const NewReleases = ({ limit }: Props) => {
     spotifyApi
       .getNewReleases({ limit })
       .then((data) => {
-        console.log(data);
-        dispatch(setReleases(data.body.albums.items));
+/*         console.log(data);
+ */        dispatch(setReleases(data.body.albums.items));
         spotifyApi.getMySavedAlbums().then(
           function (userLibData) {
             // Output items
             dispatch(setUserLibrary([...userLibData.body.items]));
           },
           function (err) {
-            console.log("Something went wrong!", err);
-          }
+/*             console.log("Something went wrong!", err);
+ */          }
         );
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {/* console.log(error) */});
 
     return;
   }, []);

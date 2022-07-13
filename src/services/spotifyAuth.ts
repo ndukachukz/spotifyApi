@@ -9,7 +9,6 @@ const base64Encoded = Buffer.from(
   `${String(clientID) + ":" + String(clientSecret)}`
 ).toString("base64");
 
-console.log(base64Encoded);
 
 export const spotifyAuth = createApi({
   reducerPath: "spotifyApi",
