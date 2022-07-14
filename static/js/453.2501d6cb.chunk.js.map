@@ -1,0 +1,1 @@
+{"version":3,"file":"static/js/453.2501d6cb.chunk.js","mappings":"+IAMA,UAJqB,WACnB,OAAO","sources":["pages/404.tsx"],"sourcesContent":["import { FC, ReactElement, ReactNode } from \"react\";\r\n\r\nconst NotFound: FC = (): ReactElement => {\r\n  return <>404</>;\r\n};\r\n\r\nexport default NotFound;\r\n"],"names":[],"sourceRoot":""}
