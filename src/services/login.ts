@@ -1,8 +1,10 @@
 const response_type = "code";
 
-const redirect_uri: string = process.env.NODE_ENV === "development" ? "http://localhost:3000/auth": "https://partnerherospotify.web.app/auth"
+const redirect_uri: string = process.env.NODE_ENV === "development"? "http://localhost:3000/auth":"https://partnerherospotify.web.app/auth"
 
 const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+
+
 
 const scope =
   "user-read-private user-read-email user-read-email user-read-email user-library-read ugc-image-upload user-library-modify";
